@@ -1,51 +1,73 @@
 class Graph {
-    constructor(points = [], segments = []){
-        this.points = points;
-        this.segments =segments;
+  constructor(points = [], segments = []) {
+    this.points = points;
+    this.segments = segments;
+  }
+
+  addPoint(point) {
+    this.points.push(point);
+  }
+
+  containsPoint(point) {
+    return this.points.find((p) => p.equals(point));
+  }
+
+  tryAddPoint(point) {
+    if (!this.containsPoint(point)) {
+      this.addPoint(point);
+      return true;
     }
 
-    addPoint(point) {
-        this.points.push(point);
+    return false;
+  }
+
+  addSegment(seg) {
+    this.segments.push(seg);
+  }
+
+  containsSegment(seg) {
+    return this.segments.find((s) => s.equals(seg));
+  }
+
+  tryAddSegment(seg) {
+    if (!this.containsSegment(seg) && !seg.p1.equals(seg.p2)) {
+      this.addSegment(seg);
+      return true;
     }
 
-    containsPoint(point){
-        return this.points.find((p)=>p.equals(point));
-    }
+    return false;
+  }
 
-    tryAddPoint(point){
-        if(!this.containsPoint(point)) {
-            this.addPoint(point);
-            return true;
+  removeSegment(seg) {
+    this.segments.splice(this.segments.indexOf(seg), 1);
+  }
+
+  removePoint(point) {
+    const segs = this.getSegmentsWithPoint(point);
+    for(const seg of segs){
+        this.removeSegment(seg);
+    }
+    this.points.splice(this.points.indexOf(point), 1);
+  }
+
+  getSegmentsWithPoint(point) {
+    const segs = [];
+    for (const seg of this.segments) {
+        console.log(seg)
+        if(seg.includes(point)){
+            segs.push(seg);
         }
+    }
+return segs;
+  }
 
-        return false;
+  draw(ctx) {
+    for (const seg of this.segments) {
+      seg.draw(ctx);
     }
 
-    addSegment(seg){
-        this.segments.push(seg);
+    for (const point of this.points) {
+      point.draw(ctx);
     }
-
-    containsSegment(seg){
-        return this.segments.find((s)=>s.equals(seg));
-    }
-
-    tryAddSegment(seg){
-        if(!this.containsSegment(seg)){
-        this.addSegment(seg);
-        return true;
-        }
-
-        return false;
-    }
-
-    draw(ctx) {
-        for(const seg of this.segments) {
-            seg.draw(ctx);
-        }
-
-        for(const point of this.points) {
-            point.draw(ctx);
-        }
-    }
-
+  }
 }
